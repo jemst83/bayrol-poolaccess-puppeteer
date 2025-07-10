@@ -7,6 +7,8 @@ puppeteer.use(StealthPlugin());
 const USERNAME = process.env.BAYROL_USERNAME;
 const PASSWORD = process.env.BAYROL_PASSWORD;
 const MQTT_BROKER = process.env.MQTT_BROKER || 'mqtt://localhost:1883';
+const MQTT_USERNAME = process.env.MQTT_USERNAME || '';
+const MQTT_PASSWORD = process.env.MQTT_PASSWORD || '';
 
 async function run() {
   console.log(`Starte mit Benutzer: ${USERNAME}`);
@@ -38,7 +40,10 @@ async function run() {
   console.log('Pooldaten:', data);
 
   console.log('Sende Daten an MQTT...');
-  const client = mqtt.connect(MQTT_BROKER);
+  const client = mqtt.connect(MQTT_BROKER, {
+    username: MQTT_USERNAME,
+    password: MQTT_PASSWORD
+  });
 
   client.on('connect', () => {
     client.publish('bayrol/data', data, {}, () => {
