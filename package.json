@@ -1,0 +1,13 @@
+{
+  "name": "bayrol-poolaccess-puppeteer",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.1",
+    "mqtt": "^5.0.0"
+  }
+}
