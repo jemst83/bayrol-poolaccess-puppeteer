@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  bayrol:
+    build: .
+    container_name: bayrol-poolaccess-puppeteer
+    restart: unless-stopped
+    environment:
+      - BAYROL_USERNAME=${BAYROL_USERNAME}
+      - BAYROL_PASSWORD=${BAYROL_PASSWORD}
+      - MQTT_BROKER=${MQTT_BROKER}
