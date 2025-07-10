@@ -13,32 +13,48 @@ async function run() {
   console.log(`MQTT-Broker: ${MQTT_BROKER}`);
 
   const browser = await puppeteer.launch({
-    headless: true,
-    args: ['--no-sandbox']
+    headless: "new",
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
   });
 
   const page = await browser.newPage();
+
+  console.log('Öffne Login-Seite...');
   await page.goto('https://www.bayrol-poolaccess.de/webview/', { waitUntil: 'networkidle2' });
 
+  console.log('Fülle Login-Formular aus...');
   await page.type('#username', USERNAME);
   await page.type('#password', PASSWORD);
-  await page.click('button[type="submit"], input[type="submit"]');
-  await page.waitForNavigation({ waitUntil: 'networkidle2' });
 
-  console.log('Login erfolgreich.');
+  console.log('Sende Login...');
+  await Promise.all([
+    page.click('button[type="submit"], input[type="submit"]'),
+    page.waitForNavigation({ waitUntil: 'networkidle2' })
+  ]);
 
+  console.log('Login erfolgreich, lade Pooldaten...');
   await page.goto('https://www.bayrol-poolaccess.de/webview/getdata.php?cid=49458', { waitUntil: 'networkidle2' });
   const data = await page.evaluate(() => document.body.innerText);
   console.log('Pooldaten:', data);
 
+  console.log('Sende Daten an MQTT...');
   const client = mqtt.connect(MQTT_BROKER);
+
   client.on('connect', () => {
     client.publish('bayrol/data', data, {}, () => {
-      console.log('Daten an MQTT veröffentlicht.');
+      console.log('Daten erfolgreich an MQTT veröffentlicht.');
       client.end();
       browser.close();
     });
   });
+
+  client.on('error', (err) => {
+    console.error('MQTT Fehler:', err);
+    client.end();
+    browser.close();
+  });
 }
 
-run().catch(console.error);
+run().catch((err) => {
+  console.error('FEHLER:', err);
+});
