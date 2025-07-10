@@ -1,11 +1,11 @@
 FROM node:20
 
-# Install dependencies
 WORKDIR /app
+
 COPY package*.json ./
 RUN npm install
 
-# Install Chromium for Puppeteer
+# Install all required Chromium dependencies
 RUN apt-get update && apt-get install -y \
     wget \
     ca-certificates \
@@ -22,11 +22,10 @@ RUN apt-get update && apt-get install -y \
     libxcomposite1 \
     libxdamage1 \
     libxrandr2 \
+    libxfixes3 \
     xdg-utils \
-    --no-install-recommends \
- && rm -rf /var/lib/apt/lists/*
+    --no-install-recommends && rm -rf /var/lib/apt/lists/*
 
-# Copy source
 COPY index.js ./
 
 CMD ["npm", "start"]
