@@ -5,7 +5,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# Install all required Chromium dependencies
+# Install ALL required Chromium dependencies!
 RUN apt-get update && apt-get install -y \
     wget \
     ca-certificates \
@@ -23,6 +23,7 @@ RUN apt-get update && apt-get install -y \
     libxdamage1 \
     libxrandr2 \
     libxfixes3 \
+    libxkbcommon0 \
     xdg-utils \
     --no-install-recommends && rm -rf /var/lib/apt/lists/*
 
