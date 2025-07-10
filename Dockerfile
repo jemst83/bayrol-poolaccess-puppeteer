@@ -5,7 +5,6 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# Install ALL required Chromium dependencies!
 RUN apt-get update && apt-get install -y \
     wget \
     ca-certificates \
